@@ -1,0 +1,61 @@
+---
+title: "extroversion"
+author: "sarah haney"
+date: "2025-04-08"
+output: html_document
+---
+
+```{r setup}
+library(dplyr)
+library(readr)
+library(ggplot2)
+
+extro <- read_csv(
+  '../data/TheExtraversion Effectother.csv',
+  show_col_types = FALSE)
+```
+
+
+```{r, reversing the scoring for question 33, 36, and 38}
+
+extro <- extro[-3, ]
+
+reverse_score <- function(x) {
+  7 - x  # Since max + min = 7 for a 1-6 scale
+}
+
+columns_to_convert <- c("Q32", "Q33", "Q34", "Q35", "Q36", "Q37", "Q38", "Q39")
+extro[columns_to_convert] <- lapply(extro[columns_to_convert], function(x) as.numeric(as.character(x)))
+
+
+
+# Applying reverse scoring
+extro <- extro %>%
+  mutate(
+    Q33 = reverse_score(Q33),
+    Q36 = reverse_score(Q36),
+    Q38 = reverse_score(Q38)
+  )
+```
+
+#Hypotheses
+
+Our hypothesis
+  H1- We expect a relationship between hours spent socializing with strangers and quality of day
+  H2- We expect a relationship between the extroversion scale and the relationship of hours and quality
+  
+# Descriptive statistics
+
+```{r extroversion score}
+extro <- extro %>%
+  rowwise() %>%
+  mutate(
+    Extraversion_Score = mean(c(Q32, Q33, Q34, Q35, Q36, Q37, Q38, Q39), na.rm = TRUE)
+  )
+```
+
+
+
+
+
+
