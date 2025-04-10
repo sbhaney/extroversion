@@ -82,6 +82,7 @@ cor.test(
     exact = FALSE
   )
 ```
+There is a weak, positive correlation bewteen the quality of day in general and the hours of socializing but this weak correlation is not statistically significant 
 
 ## Extroversion Score 
 ```{r extroversion score}
@@ -99,12 +100,14 @@ extro$Q22_1 <- as.numeric(extro$Q22_1)
 extro <- extro[!is.na(extro$Q22_1) & extro$Q22_1 != "", ]
 
 cor.test(
-    ~ Extraversion_Score + Q22_1,
+    ~ Extraversion_Score + QualityOfDay,
     data = extro,
     method = 'spearman',
     exact = FALSE
   )
 ```
+there is a weak, positive correlation between extroversion score and the quality of the day, but it is not statistically significant when the socialising hour is 4 
+
 
 ```{r extroversion score- day -correlation for Q24_1}
 extro$Q24_1 <- as.numeric(extro$Q24_1)
@@ -117,18 +120,21 @@ cor.test(
     exact = FALSE
   )
 ```
+there is a very weak, negative correlation between extroversion score and quality of day when there is socialization for 2 hours. this weak correlation is not statistically significant 
+
 
 ```{r extroversion score- day -correlation for Q28_1}
 extro$Q28_1 <- as.numeric(extro$Q28_1)
 extro <- extro[!is.na(extro$Q28_1) & extro$Q28_1 != "", ]
 
 cor.test(
-    ~ Extraversion_Score + Q28_1,
+    ~ Extraversion_Score + QualityOfDay,
     data = extro,
     method = 'spearman',
     exact = FALSE
   )
 ```
+there is a strong, statistically significant negative correlation between extroversion score and the quality of day score given by participants when the socializing hours are 0  
 
 ```{r linear model}
 library(dplyr)
