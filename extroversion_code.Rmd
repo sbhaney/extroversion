@@ -13,6 +13,7 @@ library(ggplot2)
 extro <- read_csv(
   '../data/TheExtraversion Effectother.csv',
   show_col_types = FALSE)
+
 ```
 
 
@@ -26,8 +27,6 @@ reverse_score <- function(x) {
 
 columns_to_convert <- c("Q32", "Q33", "Q34", "Q35", "Q36", "Q37", "Q38", "Q39")
 extro[columns_to_convert] <- lapply(extro[columns_to_convert], function(x) as.numeric(as.character(x)))
-
-
 
 # Applying reverse scoring
 extro <- extro %>%
@@ -46,6 +45,45 @@ Our hypothesis
   
 # Descriptive statistics
 
+## Relationship between hours and quality
+```{r}
+
+
+# Assigning hours based on non-NA values across different columns
+extro <- extro %>%
+  mutate(HoursSocializing = case_when(
+    !is.na(Q22_1) ~ 4,
+    !is.na(Q24_1) ~ 2,
+    !is.na(Q28_1) ~ 0
+  ))
+
+# Convert columns to numeric, handling potential non-numeric characters
+extro$Q22_1 <- as.numeric(as.character(extro$Q22_1))
+extro$Q24_1 <- as.numeric(as.character(extro$Q24_1))
+extro$Q28_1 <- as.numeric(as.character(extro$Q28_1))
+
+# Check for errors or warnings after conversion
+
+```
+
+```{r create column QualityOf Day}
+# Create a new column 'QualityOfDay' that is the average of non-NA day ratings
+extro <- extro %>%
+  mutate(QualityOfDay = rowMeans(select(., Q22_1, Q24_1, Q28_1), na.rm = TRUE))
+
+```
+
+
+```{r}
+cor.test(
+    ~ QualityOfDay + HoursSocializing,
+    data = extro,
+    method = 'spearman',
+    exact = FALSE
+  )
+```
+
+## Extroversion Score 
 ```{r extroversion score}
 extro <- extro %>%
   rowwise() %>%
@@ -54,8 +92,63 @@ extro <- extro %>%
   )
 ```
 
+# Correlation of Extroversion and Day
 
+```{r extroversion score- day -correlation for Q22_1}
+extro$Q22_1 <- as.numeric(extro$Q22_1)
+extro <- extro[!is.na(extro$Q22_1) & extro$Q22_1 != "", ]
 
+cor.test(
+    ~ Extraversion_Score + Q22_1,
+    data = extro,
+    method = 'spearman',
+    exact = FALSE
+  )
+```
+
+```{r extroversion score- day -correlation for Q24_1}
+extro$Q24_1 <- as.numeric(extro$Q24_1)
+extro <- extro[!is.na(extro$Q24_1) & extro$Q24_1 != "", ]
+
+cor.test(
+    ~ Extraversion_Score + QualityOfDay,
+    data = extro,
+    method = 'spearman',
+    exact = FALSE
+  )
+```
+
+```{r extroversion score- day -correlation for Q28_1}
+extro$Q28_1 <- as.numeric(extro$Q28_1)
+extro <- extro[!is.na(extro$Q28_1) & extro$Q28_1 != "", ]
+
+cor.test(
+    ~ Extraversion_Score + Q28_1,
+    data = extro,
+    method = 'spearman',
+    exact = FALSE
+  )
+```
+
+```{r linear model}
+library(dplyr)
+
+extro %>%
+  # Make sure all predictor and response variables are numeric
+  mutate(
+    QualityOfDay = as.numeric(QualityOfDay),
+    HoursSocializing = as.numeric(HoursSocializing),
+    Extraversion_Score = as.numeric(Extraversion_Score)  # Correct column name
+  ) %>%
+  # Fit the linear model
+  lm(QualityOfDay ~ HoursSocializing + Extraversion_Score, data = .) %>%
+  # Show the results
+  summary()
+
+```
+QualityOfDay = 124.49+2.93(HoursSocializing)−14.53(ExtraversionScore)
+
+this shows that as hours of socializing increase the score goes up 2.93 and the more extraverted someone is the worse the score is in general
 
 
 
