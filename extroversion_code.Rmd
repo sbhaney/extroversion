@@ -93,49 +93,40 @@ extro <- extro %>%
   )
 ```
 
+## Count of Extroverts in data
+```{r}
+sum(extro$Extraversion_Score > 3, na.rm = TRUE)
+```
+
 # Correlation of Extroversion and Day
 
-```{r extroversion score- day -correlation for Q22_1}
-extro$Q22_1 <- as.numeric(extro$Q22_1)
-extro <- extro[!is.na(extro$Q22_1) & extro$Q22_1 != "", ]
-
-cor.test(
+```{r}
+run_extro_correlation <- function(data, hour_column) {
+  data[[hour_column]] <- as.numeric(data[[hour_column]])
+  subset <- data[!is.na(data[[hour_column]]) & data[[hour_column]] != "", ]
+  
+  cor.test(
     ~ Extraversion_Score + QualityOfDay,
-    data = extro,
-    method = 'spearman',
+    data = subset,
+    method = "spearman",
     exact = FALSE
   )
+}
 ```
+
+```{r}
+run_extro_correlation(extro, "Q22_1")
+run_extro_correlation(extro, "Q24_1")
+run_extro_correlation(extro, "Q28_1")
+```
+
 there is a weak, positive correlation between extroversion score and the quality of the day, but it is not statistically significant when the socialising hour is 4 
 
-
-```{r extroversion score- day -correlation for Q24_1}
-extro$Q24_1 <- as.numeric(extro$Q24_1)
-extro <- extro[!is.na(extro$Q24_1) & extro$Q24_1 != "", ]
-
-cor.test(
-    ~ Extraversion_Score + QualityOfDay,
-    data = extro,
-    method = 'spearman',
-    exact = FALSE
-  )
-```
 there is a very weak, negative correlation between extroversion score and quality of day when there is socialization for 2 hours. this weak correlation is not statistically significant 
 
-
-```{r extroversion score- day -correlation for Q28_1}
-extro$Q28_1 <- as.numeric(extro$Q28_1)
-extro <- extro[!is.na(extro$Q28_1) & extro$Q28_1 != "", ]
-
-cor.test(
-    ~ Extraversion_Score + QualityOfDay,
-    data = extro,
-    method = 'spearman',
-    exact = FALSE
-  )
-```
 there is a strong, statistically significant negative correlation between extroversion score and the quality of day score given by participants when the socializing hours are 0  
 
+## Linear Model
 ```{r linear model}
 library(dplyr)
 
@@ -152,9 +143,9 @@ extro %>%
   summary()
 
 ```
-QualityOfDay = 124.49+2.93(HoursSocializing)−14.53(ExtraversionScore)
+QualityOfDay = 104.343 + 3.615(HoursSocializing) − 9.565(ExtraversionScore)
 
-this shows that as hours of socializing increase the score goes up 2.93 and the more extraverted someone is the worse the score is in general
+this shows that as hours of socializing increase the score goes up 3.615 and the more extraverted someone is the worse the score is in general
 
 
 
