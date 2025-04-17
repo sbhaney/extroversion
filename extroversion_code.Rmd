@@ -2,7 +2,9 @@
 title: "extroversion"
 author: "sarah haney"
 date: "2025-04-08"
-output: html_document
+output:
+  word_document: default
+  html_document: default
 ---
 
 ```{r setup}
@@ -47,7 +49,6 @@ Our hypothesis
 
 ## Relationship between hours and quality
 ```{r}
-
 
 # Assigning hours based on non-NA values across different columns
 extro <- extro %>%
@@ -138,14 +139,40 @@ extro %>%
     Extraversion_Score = as.numeric(Extraversion_Score)  # Correct column name
   ) %>%
   # Fit the linear model
-  lm(QualityOfDay ~ HoursSocializing + Extraversion_Score, data = .) %>%
+  lm(QualityOfDay ~ HoursSocializing * Extraversion_Score, data = .) %>%
   # Show the results
   summary()
 
 ```
 QualityOfDay = 104.343 + 3.615(HoursSocializing) − 9.565(ExtraversionScore)
 
-this shows that as hours of socializing increase the score goes up 3.615 and the more extraverted someone is the worse the score is in general
+This shows that as hours of socializing increase the score goes up 3.615 and the more extraverted someone is the worse the score is in general
+
+*limitation is the sample because its not representative of any sample, extroverts are way to over represented
+*one study says that study shouldn't have an effect but we can see that it might have
+
+## Age as a control
+```{r}
+model <- lm(QualityOfDay ~ HoursSocializing * Extraversion_Score + Q4, data = extro)
+summary(model)
+
+```
+Although the model did not reach conventional levels of significance (p = .11), it explained a substantial amount of variance in Quality of Day (R² = .42).
+There was a trend suggesting that greater hours socializing were associated with lower Quality of Day, but that this relationship was moderated by Extraversion, such that more extraverted individuals experienced a less negative impact.
+participants aged 26-29 and 30-33 also tended to report higher Quality of Day compared to younger participants, though these differences did not reach statistical significance.
 
 
+## Gender controlled
+```{r}
+model <- lm(QualityOfDay ~ HoursSocializing * Extraversion_Score + Q41, data = extro)
+summary(model)
+```
+The regression model including hours socializing, extraversion, their interaction, and gender did not significantly predict quality of day, though there was a trend for higher extraversion to be associated with lower quality of day (p = .073). 
+--- basically gender doesnt really seem to have an impact on this at all 
 
+## Education Controlled
+```{r}
+model <- lm(QualityOfDay ~ HoursSocializing * Extraversion_Score + Q6, data = extro)
+summary(model)
+```
+In a model controlling for education level, higher extraversion was significantly associated with lower Quality of Day (p = .018), and there was a significant interaction between hours socializing and extraversion (p = .050), such that greater extraversion reduced the negative effects of socializing hours on Quality of Day.
