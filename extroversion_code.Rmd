@@ -128,27 +128,39 @@ there is a very weak, negative correlation between extroversion score and qualit
 there is a strong, statistically significant negative correlation between extroversion score and the quality of day score given by participants when the socializing hours are 0  
 
 ## Linear Model
-```{r linear model}
-library(dplyr)
 
-extro %>%
-  # Make sure all predictor and response variables are numeric
-  mutate(
-    QualityOfDay = as.numeric(QualityOfDay),
-    HoursSocializing = as.numeric(HoursSocializing),
-    Extraversion_Score = as.numeric(Extraversion_Score)  # Correct column name
-  ) %>%
-  # Fit the linear model
-  lm(QualityOfDay ~ HoursSocializing * Extraversion_Score, data = .) %>%
-  # Show the results
-  summary()
+```{r}
+# First filter manually
+extro_clean <- extro %>%
+  filter(!is.na(QualityOfDay), !is.na(HoursSocializing), !is.na(Extraversion_Score))
+
+# Then scale
+extro_clean$HoursSocializing <- scale(extro_clean$HoursSocializing)[,1]
+extro_clean$Extraversion_Score <- scale(extro_clean$Extraversion_Score)[,1]
+
+# Then model
+model <- lm(QualityOfDay ~ HoursSocializing * Extraversion_Score, data = extro_clean)
+summary (model)
+summary(model)$coefficients
 
 ```
-QualityOfDay = 149.121 − 25.672(HoursSocializing) − 21.288(Extraversion_Score) + 7.348(HoursSocializing×Extraversion_Score)
+There is a statistically significant relationship between Quality of Day and the interaction between Hours Socializing and Extraversion. Socializing more tends to improve Quality of Day more strongly for individuals who are also high in Extraversion. Hours Socializing alone shows a trend toward significance, while Extraversion Score alone is not a significant predictor.
 
-HoursSocializing alone decreases QualityOfDay.
-Extraversion_Score alone decreases QualityOfDay.
-BUT when people are high in both HoursSocializing and Extraversion, the negative effects are partially cancelled out (positive interaction effect).
+Intercept (71.16):
+→ The predicted QualityOfDay for someone with average (mean) HoursSocializing and Extraversion_Score.
+
+HoursSocializing (7.46):
+→ More socializing tends to improve QualityOfDay by about 7.5 points per standard deviation, but p ≈ 0.05 (borderline significant).
+
+Extraversion_Score (-3.76):
+→ More extraversion alone (without considering socializing) does not significantly affect QualityOfDay (p = 0.326).
+
+Interaction (7.81):
+→ The interaction is significant!
+→ Meaning:
+
+Being more extraverted and socializing more together leads to a boost in QualityOfDay.
+→ Their combination matters — not just one by itself.
 
 
 *limitation is the sample because its not representative of any sample, extroverts are way to over represented
