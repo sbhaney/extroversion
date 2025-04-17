@@ -144,9 +144,12 @@ extro %>%
   summary()
 
 ```
-QualityOfDay = 104.343 + 3.615(HoursSocializing) − 9.565(ExtraversionScore)
+QualityOfDay = 149.121 − 25.672(HoursSocializing) − 21.288(Extraversion_Score) + 7.348(HoursSocializing×Extraversion_Score)
 
-This shows that as hours of socializing increase the score goes up 3.615 and the more extraverted someone is the worse the score is in general
+HoursSocializing alone decreases QualityOfDay.
+Extraversion_Score alone decreases QualityOfDay.
+BUT when people are high in both HoursSocializing and Extraversion, the negative effects are partially cancelled out (positive interaction effect).
+
 
 *limitation is the sample because its not representative of any sample, extroverts are way to over represented
 *one study says that study shouldn't have an effect but we can see that it might have
