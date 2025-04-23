@@ -24,13 +24,13 @@ extro <- read_csv(
 extro <- extro[-3, ]
 
 reverse_score <- function(x) {
-  7 - x  # Since max + min = 7 for a 1-6 scale
+  7 - x 
 }
 
 columns_to_convert <- c("Q32", "Q33", "Q34", "Q35", "Q36", "Q37", "Q38", "Q39")
 extro[columns_to_convert] <- lapply(extro[columns_to_convert], function(x) as.numeric(as.character(x)))
 
-# Applying reverse scoring
+
 extro <- extro %>%
   mutate(
     Q33 = reverse_score(Q33),
@@ -50,7 +50,7 @@ Our hypothesis
 ## Relationship between hours and quality
 ```{r}
 
-# Assigning hours based on non-NA values across different columns
+
 extro <- extro %>%
   mutate(HoursSocializing = case_when(
     !is.na(Q22_1) ~ 4,
@@ -58,17 +58,17 @@ extro <- extro %>%
     !is.na(Q28_1) ~ 0
   ))
 
-# Convert columns to numeric, handling potential non-numeric characters
+
 extro$Q22_1 <- as.numeric(as.character(extro$Q22_1))
 extro$Q24_1 <- as.numeric(as.character(extro$Q24_1))
 extro$Q28_1 <- as.numeric(as.character(extro$Q28_1))
 
-# Check for errors or warnings after conversion
+
 
 ```
 
 ```{r create column QualityOf Day}
-# Create a new column 'QualityOfDay' that is the average of non-NA day ratings
+
 extro <- extro %>%
   mutate(QualityOfDay = rowMeans(select(., Q22_1, Q24_1, Q28_1), na.rm = TRUE))
 
@@ -130,15 +130,15 @@ there is a strong, statistically significant negative correlation between extrov
 ## Linear Model
 
 ```{r}
-# First filter manually
+
 extro_clean <- extro %>%
   filter(!is.na(QualityOfDay), !is.na(HoursSocializing), !is.na(Extraversion_Score))
 
-# Then scale
+
 extro_clean$HoursSocializing <- scale(extro_clean$HoursSocializing)[,1]
 extro_clean$Extraversion_Score <- scale(extro_clean$Extraversion_Score)[,1]
 
-# Then model
+
 model <- lm(QualityOfDay ~ HoursSocializing * Extraversion_Score, data = extro_clean)
 summary (model)
 summary(model)$coefficients
